@@ -332,7 +332,7 @@ _hetzsnap() {
   esac
 }
 
-_hetzsnap "$@"
+(( $+functions[compdef] )) && compdef _hetzsnap hetzsnap
 `);
 }
 

@@ -110,22 +110,34 @@ hetzsnap completion
 
 ## Shell completion
 
-hetzsnap ships with a built-in zsh completion script. Add this line to your `~/.zshrc` to enable it:
+hetzsnap ships with a built-in zsh completion script.
+
+**Important:** the completion must be sourced _after_ `compinit` is called in your `~/.zshrc`. In most setups (oh-my-zsh, prezto, etc.) this is already taken care of. For a plain `~/.zshrc`, the order should be:
+
+```zsh
+autoload -Uz compinit && compinit   # must come first
+source <(hetzsnap completion)
+```
+
+**Option A — source on every shell startup** (simple):
 
 ```zsh
 source <(hetzsnap completion)
 ```
 
-Or generate the file once and place it in your completions directory (faster shell startup):
+**Option B — generate once to a file** (faster shell startup):
 
 ```zsh
+mkdir -p ~/.zsh/completions
 hetzsnap completion > ~/.zsh/completions/_hetzsnap
 ```
 
-> If using the file approach, make sure the directory is in your `$fpath` — add this to `~/.zshrc` before `compinit`:
-> ```zsh
-> fpath=(~/.zsh/completions $fpath)
-> ```
+Then add this to your `~/.zshrc` _before_ `compinit`:
+
+```zsh
+fpath=(~/.zsh/completions $fpath)
+autoload -Uz compinit && compinit
+```
 
 ## First run
 
