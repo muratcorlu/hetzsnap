@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/muratcorlu/hetzsnap/compare/v1.1.0...v1.1.1) (2026-04-21)
+
+
+### Bug Fixes
+
+* zsh completion conflict with compinit ([a65feeb](https://github.com/muratcorlu/hetzsnap/commit/a65feebceecec8df9f2e73059a81fcebec5b7c82))
+
 # [1.1.0](https://github.com/muratcorlu/hetzsnap/compare/v1.0.0...v1.1.0) (2026-04-21)
 
 
