@@ -1,0 +1,47 @@
+{
+  "name": "hetzup",
+  "version": "0.1.0",
+  "description": "CLI to spin up and tear down ephemeral Hetzner Cloud dev servers using snapshots",
+  "type": "module",
+  "bin": {
+    "hetzup": "./dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ]
+  },
+  "dependencies": {
+    "json5": "^2.2.3"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@types/node": "^22.10.0",
+    "semantic-release": "^25.0.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
