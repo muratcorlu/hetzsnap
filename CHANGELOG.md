@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/muratcorlu/hetzsnap/compare/v1.0.0...v1.1.0) (2026-04-21)
+
+
+### Features
+
+* zsh completions ([2da903f](https://github.com/muratcorlu/hetzsnap/commit/2da903f78334289f9fd9262570b35afb141d1978))
+
 # 1.0.0 (2026-04-21)
 
 
