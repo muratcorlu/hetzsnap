@@ -298,6 +298,44 @@ function writeConfig(
   console.log('File permissions set to 600 (owner read/write only).');
 }
 
+function completion() {
+  process.stdout.write(`\
+#compdef hetzsnap
+
+_hetzsnap() {
+  local state
+
+  _arguments \\
+    '1: :->command' \\
+    '*: :->args'
+
+  case $state in
+    command)
+      _values 'command' \\
+        'start[Start the dev server from the latest snapshot]' \\
+        'stop[Snapshot and delete the running server]' \\
+        'status[Show whether the server is running and for how long]' \\
+        'snapshots[List snapshots]' \\
+        'init[Run the interactive setup wizard]' \\
+        'completion[Print the zsh completion script]'
+      ;;
+    args)
+      case $words[2] in
+        snapshots)
+          _values 'subcommand' 'cleanup[Delete all snapshots except the latest]'
+          ;;
+        snapshots\\ cleanup)
+          _arguments '-y[Skip confirmation prompt]'
+          ;;
+      esac
+      ;;
+  esac
+}
+
+_hetzsnap "$@"
+`);
+}
+
 (async () => {
   try {
     if (command === 'start') {
@@ -316,8 +354,10 @@ function writeConfig(
       }
     } else if (command === 'init') {
       await init();
+    } else if (command === 'completion') {
+      completion();
     } else {
-      console.error('Usage: hetzsnap <start|stop|status|snapshots|init>');
+      console.error('Usage: hetzsnap <start|stop|status|snapshots|init|completion>');
       process.exit(1);
     }
   } catch (err: unknown) {

@@ -14,6 +14,7 @@ A minimal CLI to spin up and tear down ephemeral [Hetzner Cloud](https://www.het
 - **`hetzsnap status`** — shows whether a server is currently running and for how long.
 - **`hetzsnap snapshots`** — lists all snapshots matching your prefix with their age and size.
 - **`hetzsnap snapshots cleanup`** — deletes all snapshots except the latest, after confirmation.
+- **`hetzsnap completion`** — prints a zsh completion script.
 
 This way you always have an up-to-date snapshot and you don't pay for a server when you're not working.
 
@@ -102,7 +103,29 @@ hetzsnap snapshots cleanup -y
 
 # (Re-)run the interactive setup wizard
 hetzsnap init
+
+# Print the zsh completion script
+hetzsnap completion
 ```
+
+## Shell completion
+
+hetzsnap ships with a built-in zsh completion script. Add this line to your `~/.zshrc` to enable it:
+
+```zsh
+source <(hetzsnap completion)
+```
+
+Or generate the file once and place it in your completions directory (faster shell startup):
+
+```zsh
+hetzsnap completion > ~/.zsh/completions/_hetzsnap
+```
+
+> If using the file approach, make sure the directory is in your `$fpath` — add this to `~/.zshrc` before `compinit`:
+> ```zsh
+> fpath=(~/.zsh/completions $fpath)
+> ```
 
 ## First run
 
