@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/muratcorlu/hetzsnap/compare/v1.1.1...v1.2.0) (2026-04-24)
+
+
+### Features
+
+* up/down aliases, better status message ([9ceee4b](https://github.com/muratcorlu/hetzsnap/commit/9ceee4b4fde82cb0097d278c636b6ac6030fd77b))
+
 ## [1.1.1](https://github.com/muratcorlu/hetzsnap/compare/v1.1.0...v1.1.1) (2026-04-21)
 
 
