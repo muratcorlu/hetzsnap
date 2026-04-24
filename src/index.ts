@@ -162,14 +162,14 @@ async function status() {
 
   const server = await hetzner.findServer(config.server.name);
   if (!server) {
-    console.log(`No server named "${config.server.name}" is currently running.`);
+    console.log(`🔴 ${config.server.name} (stopped)`);
     return;
   }
 
-  const uptime = server.status === 'running' ? ` (up ${formatUptime(server.created)})` : '';
-  console.log(`Name:    ${server.name}`);
-  console.log(`Status:  ${server.status}${uptime}`);
-  console.log(`IP:      ${server.public_net.ipv4.ip}`);
+  const isRunning = server.status === 'running';
+  const ball = isRunning ? '🟢' : '🔴';
+  const label = isRunning ? `running, up ${formatUptime(server.created)}` : server.status;
+  console.log(`${ball} ${server.name} (${label})`);
 }
 
 async function stop() {
@@ -313,7 +313,9 @@ _hetzsnap() {
     command)
       _values 'command' \\
         'start[Start the dev server from the latest snapshot]' \\
+        'up[Alias for start]' \\
         'stop[Snapshot and delete the running server]' \\
+        'down[Alias for stop]' \\
         'status[Show whether the server is running and for how long]' \\
         'snapshots[List snapshots]' \\
         'init[Run the interactive setup wizard]' \\
@@ -338,9 +340,9 @@ _hetzsnap() {
 
 (async () => {
   try {
-    if (command === 'start') {
+    if (command === 'start' || command === 'up') {
       await start();
-    } else if (command === 'stop') {
+    } else if (command === 'stop' || command === 'down') {
       await stop();
     } else if (command === 'status') {
       await status();
@@ -357,7 +359,7 @@ _hetzsnap() {
     } else if (command === 'completion') {
       completion();
     } else {
-      console.error('Usage: hetzsnap <start|stop|status|snapshots|init|completion>');
+      console.error('Usage: hetzsnap <start|up|stop|down|status|snapshots|init|completion>');
       process.exit(1);
     }
   } catch (err: unknown) {
