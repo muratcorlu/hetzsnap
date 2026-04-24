@@ -77,8 +77,8 @@ export function createHetznerClient(token: string) {
     location: string;
     image: number | string;
     sshKeyIds?: number[];
-  }): Promise<HetznerServer> {
-    const data = await request<{ server: HetznerServer }>('POST', '/servers', undefined, {
+  }): Promise<{ server: HetznerServer; actionId: number }> {
+    const data = await request<{ server: HetznerServer; action: { id: number } }>('POST', '/servers', undefined, {
       name: params.name,
       server_type: params.serverType,
       location: params.location,
@@ -87,11 +87,12 @@ export function createHetznerClient(token: string) {
       user_data: USER_DATA,
       ...(params.sshKeyIds?.length ? { ssh_keys: params.sshKeyIds } : {}),
     });
-    return data.server;
+    return { server: data.server, actionId: data.action.id };
   }
 
-  async function shutdownServer(serverId: number): Promise<void> {
-    await request('POST', `/servers/${serverId}/actions/shutdown`);
+  async function shutdownServer(serverId: number): Promise<{ actionId: number }> {
+    const data = await request<{ action: { id: number } }>('POST', `/servers/${serverId}/actions/shutdown`);
+    return { actionId: data.action.id };
   }
 
   async function createSnapshot(
@@ -107,23 +108,14 @@ export function createHetznerClient(token: string) {
     return { imageId: data.image.id, actionId: data.action.id };
   }
 
-  async function waitForAction(actionId: number): Promise<void> {
-    for (let i = 0; i < 120; i++) {
-      const data = await request<{ action: { status: string; error?: { message: string } } }>('GET', `/actions/${actionId}`);
+  async function waitForAction(actionId: number, onProgress?: (progress: number) => void): Promise<void> {
+    for (;;) {
+      const data = await request<{ action: { status: string; progress: number; error?: { message: string } } }>('GET', `/actions/${actionId}`);
+      onProgress?.(data.action.progress);
       if (data.action.status === 'success') return;
       if (data.action.status === 'error') throw new Error(`Action failed: ${data.action.error?.message}`);
       await sleep(5000);
     }
-    throw new Error('Timed out waiting for action');
-  }
-
-  async function waitForServerStatus(serverId: number, targetStatus: string): Promise<HetznerServer> {
-    for (let i = 0; i < 60; i++) {
-      const data = await request<{ server: HetznerServer }>('GET', `/servers/${serverId}`);
-      if (data.server.status === targetStatus) return data.server;
-      await sleep(5000);
-    }
-    throw new Error(`Timed out waiting for server status: ${targetStatus}`);
   }
 
   async function deleteServer(serverId: number): Promise<void> {
@@ -153,7 +145,6 @@ export function createHetznerClient(token: string) {
     shutdownServer,
     createSnapshot,
     waitForAction,
-    waitForServerStatus,
     deleteServer,
     deleteImage,
     changeImageProtection,

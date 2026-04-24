@@ -53,17 +53,22 @@ async function start() {
   const sshKeyIds = await Promise.all(config.server.sshKeys.map((k) => hetzner.findSshKeyByName(k)));
 
   console.log(`Creating server "${config.server.name}" (${config.server.serverType}, ${config.server.location})...`);
-  const server = await hetzner.createServer({
+  const { server, actionId: createActionId } = await hetzner.createServer({
     name: config.server.name,
     serverType: config.server.serverType,
     location: config.server.location,
     image,
     sshKeyIds,
   });
-  console.log(`Server created (id: ${server.id}), waiting for it to start...`);
+  const startMsg = `Server created (id: ${server.id}), waiting for it to start...`;
+  process.stdout.write(startMsg);
+  await hetzner.waitForAction(createActionId, (p) => {
+    process.stdout.write(`\r${startMsg} (${p}%)`);
+  });
+  process.stdout.write('\n');
 
-  const running = await hetzner.waitForServerStatus(server.id, 'running');
-  const ip = running.public_net.ipv4.ip;
+  const running = await hetzner.findServer(config.server.name);
+  const ip = running!.public_net.ipv4.ip;
   console.log(`Server is running. IP: ${ip}`);
 
   if (config.tokens.cloudflare && config.cloudflare) {
@@ -185,18 +190,26 @@ async function stop() {
   console.log(`Found server (id: ${server.id}, status: ${server.status})`);
 
   if (server.status === 'running') {
-    console.log('Shutting down server...');
-    await hetzner.shutdownServer(server.id);
-    await hetzner.waitForServerStatus(server.id, 'off');
+    const shutdownMsg = 'Shutting down server...';
+    process.stdout.write(shutdownMsg);
+    const { actionId: shutdownActionId } = await hetzner.shutdownServer(server.id);
+    await hetzner.waitForAction(shutdownActionId, (p) => {
+      process.stdout.write(`\r${shutdownMsg} (${p}%)`);
+    });
+    process.stdout.write('\n');
     console.log('Server is off.');
   }
 
   const oldSnapshots = await hetzner.findSnapshotsByPrefix(config.server.snapshotPrefix);
 
   const name = snapshotName(config.server.snapshotPrefix);
-  console.log(`Taking snapshot "${name}"...`);
+  const snapshotMsg = `Taking snapshot "${name}"...`;
+  process.stdout.write(snapshotMsg);
   const { imageId, actionId } = await hetzner.createSnapshot(server.id, name);
-  await hetzner.waitForAction(actionId);
+  await hetzner.waitForAction(actionId, (p) => {
+    process.stdout.write(`\r${snapshotMsg} (${p}%)`);
+  });
+  process.stdout.write('\n');
   console.log('Snapshot ready.');
 
   console.log('Enabling protection on new snapshot...');
