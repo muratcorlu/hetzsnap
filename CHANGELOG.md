@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/muratcorlu/hetzsnap/compare/v1.2.0...v1.3.0) (2026-04-24)
+
+
+### Features
+
+* show progress on starting server or creating snapshot ([0e3b728](https://github.com/muratcorlu/hetzsnap/commit/0e3b7288c34fd1ea61294da01a4fb3596ffb3cc0))
+
 # [1.2.0](https://github.com/muratcorlu/hetzsnap/compare/v1.1.1...v1.2.0) (2026-04-24)
 
 
