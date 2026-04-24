@@ -9,8 +9,8 @@ A minimal CLI to spin up and tear down ephemeral [Hetzner Cloud](https://www.het
 
 ## How it works
 
-- **`hetzsnap start`** — finds the latest snapshot matching your prefix and creates a server from it. If no snapshot exists yet, creates a fresh server from the base OS image. Optionally points a Cloudflare DNS record at the new IP.
-- **`hetzsnap stop`** — shuts down the server, takes a fresh snapshot (with delete-protection enabled), disables protection on older snapshots, then deletes the server.
+- **`hetzsnap start`** (alias: **`up`**) — finds the latest snapshot matching your prefix and creates a server from it. If no snapshot exists yet, creates a fresh server from the base OS image. Optionally points a Cloudflare DNS record at the new IP.
+- **`hetzsnap stop`** (alias: **`down`**) — shuts down the server, takes a fresh snapshot (with delete-protection enabled), disables protection on older snapshots, then deletes the server.
 - **`hetzsnap status`** — shows whether a server is currently running and for how long.
 - **`hetzsnap snapshots`** — lists all snapshots matching your prefix with their age and size.
 - **`hetzsnap snapshots cleanup`** — deletes all snapshots except the latest, after confirmation.
@@ -84,10 +84,10 @@ Config is stored at `~/.hetzsnap.json5`. Example:
 
 ```bash
 # Start your dev server (from latest snapshot, or base image on first run)
-hetzsnap start
+hetzsnap start  # or: hetzsnap up
 
 # Stop your dev server (snapshot → protect → delete server)
-hetzsnap stop
+hetzsnap stop   # or: hetzsnap down
 
 # Show whether a server is running and for how long
 hetzsnap status
